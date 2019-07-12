@@ -2,14 +2,67 @@
 // Created by Matt Miecnikowski on 2019-07-06.
 //
 
+#include <arpa/inet.h>
+//#include <netinet/in.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../udpchat.h"
 #include "shell/shell.h"
+#include "client_to_server.h"
 
 int start_client(char* nickname, char* serverip, int serverport, int clientport)
 {
-    char* buffer = malloc(MAXLEN);
+    int sockfide_out; /// output socket file descriptor
+    struct sockaddr_in servaddr; /// server address
+
+    /// create output socket
+    if ((sockfide_out = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    {
+        printf("Failed to create output socket!");
+        return 1;
+    }
+
+    /// fill in server info
+    memset(&servaddr, 0, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_port = htons(serverport);
+    servaddr.sin_addr.s_addr = inet_addr(serverip);
+
+    /// send registration request to server
+    if (register_client(sockfide_out, servaddr, nickname, clientport))
+    {
+        write_output("[Failed to register.]")
+        return 1;
+    };
+
+    int sockfide_in; /// listener socket file descriptor
+    struct sockaddr_in myaddr; /// my address?
+
+    /// create listener socket
+    if ((sockfide_out = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    {
+        printf("Failed to create listener socket!");
+        return 1;
+    }
+
+    /// setup listener address with provided port
+    memset(&myaddr, 0, sizeof(myaddr));
+    myaddr.sin_family = AF_INET;
+    myaddr.sin_addr.s_addr = INADDR_ANY;
+    myaddr.sin_port = htons(clientport);
+
+    /// bind listener port
+    if (bind(sockfide_out, (struct sockaddr*)&myaddr, sizeof(struct sockaddr_in)))
+    {
+        printf("Failed to bind listener socket!");
+        return 1;
+    }
+
+
+    /// start shell and handle shell commands
+    char buffer[MAXLEN];
     enum commandtype command;
     while (1)
     {
@@ -24,13 +77,12 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
         }
         else if (command == reg)
         {
-            write_output("[Registering is not yet implemented!]");
+            register_client(sockfide_out, servaddr, nickname, clientport);
         }
-        else if (command == send)
+        else if (command == dereg)
         {
-            write_output("[Deregistering is not yet implemented!]");
+            deregister_client(sockfide_out, servaddr, nickname);
         }
     }
-    free(buffer);
     return 0;
 }

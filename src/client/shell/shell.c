@@ -15,14 +15,12 @@ int get_command(enum commandtype *type, char* body, int maxlen)
         printf("get_command must be provided a buffer of size MAXLEN!");
         return 1;
     }
-    char* userinput = malloc(MAXLEN);
+    char userinput[MAXLEN];
     prompt_command(userinput, MAXLEN);
 
-    char* command = malloc(MAXCOMMANDLEN);
+    char command[MAXCOMMANDLEN];
 
     int count = sscanf(userinput, "%" MAXCOMMANDLEN_STR "s %" MAXLEN_STR "s", command, body);
-
-    free(userinput);
 
     if (count == 1 && (strcmp(command, "exit") == 0))
     {
@@ -33,7 +31,6 @@ int get_command(enum commandtype *type, char* body, int maxlen)
     if (count != 2)
     {
         write_output("[Error parsing user input!]");
-        free(command);
         return 1;
     }
 
@@ -56,11 +53,9 @@ int get_command(enum commandtype *type, char* body, int maxlen)
     else
     {
         write_output("[Invalid command!]");
-        free(command);
         return 1;
     }
 
-    free(command);
     return 0;
 }
 
