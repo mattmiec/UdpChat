@@ -44,7 +44,7 @@ int get_command(enum commandtype *type, char* body, int maxlen)
     }
     else if (strcmp(command, "send") == 0)
     {
-        *type = send;
+        *type = message;
     }
     else if (strcmp(command, "exit") == 0)
     {

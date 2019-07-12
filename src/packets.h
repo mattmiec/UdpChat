@@ -11,7 +11,7 @@
 #define LENNAME 16
 #define LENMESSAGE 2048
 
-struct server_packet
+struct packet
 {
     int32_t ackport;
     int32_t listenerport;
@@ -19,12 +19,6 @@ struct server_packet
     char fromname[LENNAME]; // nickname of user sending request
     char toname[LENNAME]; // (optional) nickname of message recipient if packet type is "OFFLINE"
     char message[LENMESSAGE]; // (optional) message text if packet type is "OFFLINE"
-};
-
-struct peer_packet
-{
-    char fromname[LENNAME];
-    char message[LENMESSAGE];
 };
 
 #endif //UDPCHAT_PACKETS_H

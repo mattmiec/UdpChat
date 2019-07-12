@@ -11,7 +11,7 @@
 #define MAXCOMMANDLEN_STR "6"
 
 /// enum for command type
-enum commandtype{reg, dereg, send, quit};
+enum commandtype{reg, dereg, message, quit};
 
 /// get command type and body from user (
 /// body buffer size specified by maxlen

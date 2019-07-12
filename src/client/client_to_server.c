@@ -9,7 +9,7 @@
 
 int register_client(int socketfide_out, struct sockaddr_in servaddr, char* myname, int listenerport)
 {
-    struct server_packet outpacket;
+    struct packet outpacket;
     memset(&outpacket, 0, sizeof(outpacket));
     outpacket.ackport = 0;
     outpacket.listenerport = listenerport;
@@ -30,7 +30,7 @@ int register_client(int socketfide_out, struct sockaddr_in servaddr, char* mynam
 
 int deregister_client(int socketfide_out, struct sockaddr_in servaddr, char* myname)
 {
-    struct server_packet outpacket;
+    struct packet outpacket;
     memset(&outpacket, 0, sizeof(outpacket));
     outpacket.ackport = 0;
     strncpy(outpacket.type, "DEREG", strlen("DEREG"));
@@ -50,7 +50,7 @@ int deregister_client(int socketfide_out, struct sockaddr_in servaddr, char* myn
 
 int offline_message(int socketfide_out, struct sockaddr_in servaddr, char* myname, char* toname, char* message)
 {
-    struct server_packet outpacket;
+    struct packet outpacket;
     memset(&outpacket, 0, sizeof(outpacket));
     outpacket.ackport = 0;
     strncpy(outpacket.type, "MESSAGE", strlen("MESSAGE"));
