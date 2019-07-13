@@ -22,7 +22,7 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
     /// create output socket
     if ((sockfide_out = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
-        printf("Failed to create output socket!");
+        write_output("[Failed to create output socket.]");
         return 1;
     }
 
@@ -46,7 +46,7 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
     /// create listener socket
     if ((sockfide_in = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
-        printf("Failed to create listener socket!");
+        write_output("[Failed to create listener socket!]");
         return 1;
     }
 

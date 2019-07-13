@@ -67,7 +67,7 @@ void prompt_command(char* input, int maxlen)
 
 void write_output(char* output)
 {
-    printf(">>> ");
+    printf("\n>>> ");
     printf(output);
     printf("\n");
 }
