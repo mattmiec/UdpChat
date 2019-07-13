@@ -9,24 +9,27 @@
 #include <arpa/inet.h>
 #include "../usertable.h"
 #include "shell/shell.h"
+#include "sender_toserver.h"
+#include <stdlib.h>
+#include <unistd.h>
 
-int send_message(int socketfide_out, char* myname, char* sendcommand)
+int send_message(int socketfide_out, char* myname, char* sendcommand, bool* acked, struct sockaddr_in servaddr)
 {
     char toname[LENNAME];
     char message[LENMESSAGE];
 
     int count = sscanf(sendcommand, "%16s %2048s", toname, message);
 
-    struct sockaddr_in peeraddr; /// server address
-
-    struct table_entry peer_table_entry = lookup_table_entry(toname);
-
     /// fill in peer info
+    struct sockaddr_in peeraddr;
+    struct table_entry peer_table_entry = lookup_table_entry(toname);
     memset(&peeraddr, 0, sizeof(peeraddr));
     peeraddr.sin_family = AF_INET;
     peeraddr.sin_port = htons(peer_table_entry.port);
     peeraddr.sin_addr.s_addr = peer_table_entry.ip_addr;
 
+
+    /// construct and send message packet
     struct packet outpacket;
     memset(&outpacket, 0, sizeof(outpacket));
     outpacket.ackport = 0;
@@ -34,6 +37,8 @@ int send_message(int socketfide_out, char* myname, char* sendcommand)
     strncpy(outpacket.fromname, myname, strlen(myname));
     strncpy(outpacket.toname, toname, strlen(toname));
     strncpy(outpacket.message, message, strlen(message));
+    *acked = false;
+    count++;
     int bytes_sent = sendto(
             socketfide_out,
             &outpacket,
@@ -44,13 +49,44 @@ int send_message(int socketfide_out, char* myname, char* sendcommand)
     );
     if (bytes_sent < 0)
     {
-        printf("[Failed to send message to %s.]\n>>>", toname);
+        printf("\n>>>[Failed to send message to %s.]\n>>>", toname);
         return 1;
     }
-
-
-
-
-    printf("[Sent message to %s.]\n>>>", toname);
+    usleep(500000);
+    if (*acked)
+    {
+        *acked=false;
+        printf("\n>>>[Message received by %s.]\n>>>", toname);
+        return 0;
+    }
+    offline_message(socketfide_out, servaddr, myname, toname, message);
+    printf("\n>>>[No ACK from %s, message sent to server.]\n>>>", toname);
     return 0;
+
+}
+
+int send_ack(int socketfide_out, char* myname, char* toname)
+{
+    /// fill in peer info
+    struct sockaddr_in peeraddr;
+    struct table_entry peer_table_entry = lookup_table_entry(toname);
+    memset(&peeraddr, 0, sizeof(peeraddr));
+    peeraddr.sin_family = AF_INET;
+    peeraddr.sin_port = htons(peer_table_entry.port);
+    peeraddr.sin_addr.s_addr = peer_table_entry.ip_addr;
+
+    /// construct and send ack packet
+    struct packet outpacket;
+    memset(&outpacket, 0, sizeof(outpacket));
+    strncpy(outpacket.type, "ACK", strlen("ACK"));
+    int bytes_sent = sendto(
+            socketfide_out,
+            &outpacket,
+            sizeof(outpacket),
+            0,
+            (const struct sockaddr*)&peeraddr,
+            sizeof(peeraddr)
+    );
+    if (bytes_sent < 0)
+        return 1;
 }

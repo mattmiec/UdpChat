@@ -3,6 +3,7 @@
 //
 
 #include <arpa/inet.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,6 +19,7 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
 {
     int sockfide_in; /// listener socket file descriptor
     struct sockaddr_in myaddr; /// my address?
+    bool acked = false;
 
     /// create listener socket
     if ((sockfide_in = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
@@ -39,15 +41,15 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
         return 1;
     }
 
-    int sockfide_out; /// output socket file descriptor
+    //int sockfide_out; /// output socket file descriptor
     struct sockaddr_in servaddr; /// server address
 
     /// create output socket
-    if ((sockfide_out = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
-    {
-        puts(">>> [Failed to create output socket.]");
-        return 1;
-    }
+    //if ((sockfide_out = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    //{
+    //    puts(">>> [Failed to create output socket.]");
+    //    return 1;
+    //}
 
     /// fill in server info
     memset(&servaddr, 0, sizeof(servaddr));
@@ -65,7 +67,7 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
     //}
 
     /// send registration request to server
-    if (register_client(sockfide_out, servaddr, nickname, clientport))
+    if (register_client(sockfide_in, servaddr, nickname, clientport))
     {
         puts(">>> [Failed to register.]");
         return 1;
@@ -74,7 +76,10 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
 
     /// start listener thread
     pthread_t listener_thread;
-    pthread_create(&listener_thread, NULL, listen_handler, (void*) sockfide_in);
+    struct listen_handler_args args;
+    args.socketfide = sockfide_in;
+    args.acked = &acked;
+    pthread_create(&listener_thread, NULL, listen_handler, (void*) &args);
 
     /// start shell and handle shell commands
     char buffer[MAXLEN];
@@ -88,15 +93,15 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
             break;
         else if (command == message)
         {
-            send_message(sockfide_out, nickname, buffer);
+            send_message(sockfide_in, nickname, buffer, &acked, servaddr);
         }
         else if (command == reg)
         {
-            register_client(sockfide_out, servaddr, buffer, clientport);
+            register_client(sockfide_in, servaddr, buffer, clientport);
         }
         else if (command == dereg)
         {
-            deregister_client(sockfide_out, servaddr, buffer);
+            deregister_client(sockfide_in, servaddr, buffer);
         }
     }
     return 0;

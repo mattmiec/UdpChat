@@ -9,16 +9,19 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "sender_topeer.h"
 
-
-void *listen_handler(void* socketfide)
+void *listen_handler(void* args)
 {
+    int socketfide = ((struct listen_handler_args*)args)->socketfide;
+    bool* acked = ((struct listen_handler_args*)args)->acked;
+
     struct packet inpacket;
     struct sockaddr_in sockaddr;
     socklen_t fromlen = sizeof(sockaddr);
     while (1)
     {
-        int bytes = recvfrom((int)socketfide, (void *)&inpacket, sizeof(inpacket), 0, (struct sockaddr*)&sockaddr, &fromlen);
+        int bytes = recvfrom(socketfide, (void *)&inpacket, sizeof(inpacket), 0, (struct sockaddr*)&sockaddr, &fromlen);
 
         if (strcmp(inpacket.type, "MESSAGE") == 0)
         {
@@ -30,21 +33,12 @@ void *listen_handler(void* socketfide)
             printf(">>> ");
             free(buffer);
 
-            /// send ack
-            struct packet outpacket;
-            memset(&outpacket, 0, sizeof(outpacket));
-            strncpy(outpacket.type, "ACK", strlen("ACK"));
-            int bytes_sent = sendto(
-                    (int)socketfide,
-                    &outpacket,
-                    sizeof(outpacket),
-                    0,
-                    (const struct sockaddr*)&sockaddr,
-                    sizeof(sockaddr)
-            );
-            if (bytes_sent < 0)
-                return 1;
+            send_ack(socketfide, inpacket.toname, inpacket.fromname);
+        }
 
+        if (strcmp(inpacket.type, "ACK") == 0)
+        {
+            *acked = true;
         }
 
         if (bytes < 0)
