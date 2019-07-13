@@ -31,6 +31,7 @@ void *listen_handler(void* args)
             strcat(buffer, inpacket.message);
             puts(buffer);
             printf(">>> ");
+            fflush(stdout);
             free(buffer);
 
             send_ack(socketfide, inpacket.toname, inpacket.fromname);

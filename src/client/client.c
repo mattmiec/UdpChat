@@ -17,12 +17,12 @@
 
 int start_client(char* nickname, char* serverip, int serverport, int clientport)
 {
-    int sockfide_in; /// listener socket file descriptor
+    int sockfide; /// listener socket file descriptor
     struct sockaddr_in myaddr; /// my address?
     bool acked = false;
 
-    /// create listener socket
-    if ((sockfide_in = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    /// create socket
+    if ((sockfide = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
         puts(">>> [Failed to create listener socket!]");
         return 1;
@@ -35,21 +35,13 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
     myaddr.sin_port = htons(clientport);
 
     /// bind listener port
-    if (bind(sockfide_in, (struct sockaddr*)&myaddr, sizeof(struct sockaddr_in)))
+    if (bind(sockfide, (struct sockaddr*)&myaddr, sizeof(struct sockaddr_in)))
     {
         puts(">>> [Failed to bind listener socket!]");
         return 1;
     }
 
-    //int sockfide_out; /// output socket file descriptor
     struct sockaddr_in servaddr; /// server address
-
-    /// create output socket
-    //if ((sockfide_out = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
-    //{
-    //    puts(">>> [Failed to create output socket.]");
-    //    return 1;
-    //}
 
     /// fill in server info
     memset(&servaddr, 0, sizeof(servaddr));
@@ -57,27 +49,16 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
     servaddr.sin_port = htons(serverport);
     servaddr.sin_addr.s_addr = inet_addr(serverip);
 
-    //myaddr.sin_port = htons(clientport + 1);
-
-    ///// bind sender port
-    //if (bind(sockfide_out, (struct sockaddr*)&myaddr, sizeof(struct sockaddr_in)))
-    //{
-    //    puts("Failed to bind sender socket!");
-    //    return 1;
-    //}
-
     /// send registration request to server
-    if (register_client(sockfide_in, servaddr, nickname, clientport))
+    if (register_client(sockfide, servaddr, nickname, clientport))
     {
-        puts(">>> [Failed to register.]");
         return 1;
     }
-    puts(">>> [Welcome, you are registered.]");
 
     /// start listener thread
     pthread_t listener_thread;
     struct listen_handler_args args;
-    args.socketfide = sockfide_in;
+    args.socketfide = sockfide;
     args.acked = &acked;
     pthread_create(&listener_thread, NULL, listen_handler, (void*) &args);
 
@@ -93,15 +74,15 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
             break;
         else if (command == message)
         {
-            send_message(sockfide_in, nickname, buffer, &acked, servaddr);
+            send_message(sockfide, nickname, buffer, &acked, servaddr);
         }
         else if (command == reg)
         {
-            register_client(sockfide_in, servaddr, buffer, clientport);
+            register_client(sockfide, servaddr, buffer, clientport);
         }
         else if (command == dereg)
         {
-            deregister_client(sockfide_in, servaddr, buffer);
+            deregister_client(sockfide, servaddr, buffer);
         }
     }
     return 0;

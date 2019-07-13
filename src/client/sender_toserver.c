@@ -6,6 +6,8 @@
 #include "sender_toserver.h"
 #include <arpa/inet.h>
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 int register_client(int socketfide_out, struct sockaddr_in servaddr, char* myname, int listenerport)
 {
@@ -24,7 +26,11 @@ int register_client(int socketfide_out, struct sockaddr_in servaddr, char* mynam
             sizeof(servaddr)
             );
     if (bytes_sent < 0)
+    {
+        puts(">>> [Failed to register.]");
         return 1;
+    }
+    puts(">>> [Welcome, you are registered.]");
     return 0;
 }
 
@@ -44,7 +50,12 @@ int deregister_client(int socketfide_out, struct sockaddr_in servaddr, char* myn
             sizeof(servaddr)
     );
     if (bytes_sent < 0)
-        return 1;
+    {
+        puts(">>> [Server not responding]");
+        puts(">>> [Exiting]");
+        exit(1);
+    }
+    puts(">>> [You are offline. Bye.]");
     return 0;
 }
 
@@ -65,7 +76,11 @@ int offline_message(int socketfide_out, struct sockaddr_in servaddr, char* mynam
             (const struct sockaddr*)&servaddr,
             sizeof(servaddr)
     );
-    if (bytes_sent < 0)
-        return 1;
+    if (bytes_sent < 0) {
+        puts(">>> [Failed to send to server]");
+        puts(">>> [Exiting]");
+        exit(1);
+    }
+    puts(">>> [Message received by the server and saved]");
     return 0;
 }
