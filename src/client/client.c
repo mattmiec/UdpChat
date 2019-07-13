@@ -16,30 +16,6 @@
 
 int start_client(char* nickname, char* serverip, int serverport, int clientport)
 {
-    int sockfide_out; /// output socket file descriptor
-    struct sockaddr_in servaddr; /// server address
-
-    /// create output socket
-    if ((sockfide_out = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
-    {
-        write_output("[Failed to create output socket.]");
-        return 1;
-    }
-
-    /// fill in server info
-    memset(&servaddr, 0, sizeof(servaddr));
-    servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(serverport);
-    servaddr.sin_addr.s_addr = inet_addr(serverip);
-
-    /// send registration request to server
-    if (register_client(sockfide_out, servaddr, nickname, clientport))
-    {
-        write_output("[Failed to register.]");
-        return 1;
-    }
-    write_output("[Welcome, you are registered.]");
-
     int sockfide_in; /// listener socket file descriptor
     struct sockaddr_in myaddr; /// my address?
 
@@ -62,6 +38,39 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
         printf("Failed to bind listener socket!");
         return 1;
     }
+
+    int sockfide_out; /// output socket file descriptor
+    struct sockaddr_in servaddr; /// server address
+
+    /// create output socket
+    if ((sockfide_out = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    {
+        write_output("[Failed to create output socket.]");
+        return 1;
+    }
+
+    /// fill in server info
+    memset(&servaddr, 0, sizeof(servaddr));
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_port = htons(serverport);
+    servaddr.sin_addr.s_addr = inet_addr(serverip);
+
+    myaddr.sin_port = htons(clientport + 1);
+
+    /// bind sender port
+    if (bind(sockfide_out, (struct sockaddr*)&myaddr, sizeof(struct sockaddr_in)))
+    {
+        printf("Failed to bind sender socket!");
+        return 1;
+    }
+
+    /// send registration request to server
+    if (register_client(sockfide_out, servaddr, nickname, clientport))
+    {
+        write_output("[Failed to register.]");
+        return 1;
+    }
+    write_output("[Welcome, you are registered.]");
 
     /// start listener thread
     pthread_t listener_thread;
