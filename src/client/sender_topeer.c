@@ -21,7 +21,7 @@ int send_message(int socketfide_out, char* myname, char* sendcommand, bool* acke
     memset(toname, 0, LENNAME);
     memset(message, 0, LENMESSAGE);
 
-    int count = sscanf(sendcommand, "%16s %2048s", toname, message);
+    int count = sscanf(sendcommand, "%16s %[^\n]2048s", toname, message);
 
     /// fill in peer info
     struct sockaddr_in peeraddr;
