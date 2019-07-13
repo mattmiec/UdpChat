@@ -18,6 +18,9 @@ int send_message(int socketfide_out, char* myname, char* sendcommand, bool* acke
     char toname[LENNAME];
     char message[LENMESSAGE];
 
+    memset(toname, 0, LENNAME);
+    memset(message, 0, LENMESSAGE);
+
     int count = sscanf(sendcommand, "%16s %2048s", toname, message);
 
     /// fill in peer info
@@ -56,7 +59,7 @@ int send_message(int socketfide_out, char* myname, char* sendcommand, bool* acke
     if (*acked)
     {
         *acked=false;
-        printf(">>>[Message received by %s.]\n", toname);
+        printf(">>> [Message received by %s.]\n", toname);
         return 0;
     }
     printf(">>> [No ACK from %s, message sent to server.]\n", toname);

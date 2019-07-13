@@ -20,7 +20,7 @@ int get_command(enum commandtype *type, char* body, int maxlen)
 
     char command[MAXCOMMANDLEN];
 
-    int count = sscanf(userinput, "%" MAXCOMMANDLEN_STR "s %" MAXLEN_STR "s", command, body);
+    int count = sscanf(userinput, "%" MAXCOMMANDLEN_STR "s %" MAXLEN_STR "[^\n]s", command, body);
 
     if (count == 1 && (strcmp(command, "exit") == 0))
     {
