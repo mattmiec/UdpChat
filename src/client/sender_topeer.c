@@ -44,9 +44,13 @@ int send_message(int socketfide_out, char* myname, char* sendcommand)
     );
     if (bytes_sent < 0)
     {
-        printf("\n>>> [Failed to send message to %s.]\n", toname);
+        printf("[Failed to send message to %s.]\n>>>", toname);
         return 1;
     }
-    printf("\n>>> [Sent message to %s.]\n", toname);
+
+
+
+
+    printf("[Sent message to %s.]\n>>>", toname);
     return 0;
 }

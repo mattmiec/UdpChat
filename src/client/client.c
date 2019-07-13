@@ -22,7 +22,7 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
     /// create listener socket
     if ((sockfide_in = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
-        write_output("[Failed to create listener socket!]");
+        puts(">>> [Failed to create listener socket!]");
         return 1;
     }
 
@@ -35,7 +35,7 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
     /// bind listener port
     if (bind(sockfide_in, (struct sockaddr*)&myaddr, sizeof(struct sockaddr_in)))
     {
-        printf("Failed to bind listener socket!");
+        puts(">>> [Failed to bind listener socket!]");
         return 1;
     }
 
@@ -45,7 +45,7 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
     /// create output socket
     if ((sockfide_out = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
-        write_output("[Failed to create output socket.]");
+        puts(">>> [Failed to create output socket.]");
         return 1;
     }
 
@@ -55,22 +55,22 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
     servaddr.sin_port = htons(serverport);
     servaddr.sin_addr.s_addr = inet_addr(serverip);
 
-    myaddr.sin_port = htons(clientport + 1);
+    //myaddr.sin_port = htons(clientport + 1);
 
-    /// bind sender port
-    if (bind(sockfide_out, (struct sockaddr*)&myaddr, sizeof(struct sockaddr_in)))
-    {
-        printf("Failed to bind sender socket!");
-        return 1;
-    }
+    ///// bind sender port
+    //if (bind(sockfide_out, (struct sockaddr*)&myaddr, sizeof(struct sockaddr_in)))
+    //{
+    //    puts("Failed to bind sender socket!");
+    //    return 1;
+    //}
 
     /// send registration request to server
     if (register_client(sockfide_out, servaddr, nickname, clientport))
     {
-        write_output("[Failed to register.]");
+        puts(">>> [Failed to register.]");
         return 1;
     }
-    write_output("[Welcome, you are registered.]");
+    puts(">>> [Welcome, you are registered.]");
 
     /// start listener thread
     pthread_t listener_thread;

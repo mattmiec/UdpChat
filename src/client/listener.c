@@ -8,13 +8,14 @@
 #include "shell/shell.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 
 void *listen_handler(void* socketfide)
 {
     struct packet inpacket;
     struct sockaddr_in sockaddr;
-    socklen_t fromlen;
+    socklen_t fromlen = sizeof(sockaddr);
     while (1)
     {
         int bytes = recvfrom((int)socketfide, (void *)&inpacket, sizeof(inpacket), 0, (struct sockaddr*)&sockaddr, &fromlen);
@@ -25,7 +26,8 @@ void *listen_handler(void* socketfide)
             strcpy(buffer, inpacket.fromname);
             strcat(buffer, ": ");
             strcat(buffer, inpacket.message);
-            write_output(buffer);
+            puts(buffer);
+            printf(">>> ");
             free(buffer);
 
             /// send ack

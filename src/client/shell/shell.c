@@ -12,7 +12,7 @@ int get_command(enum commandtype *type, char* body, int maxlen)
 {
     if (maxlen != MAXLEN)
     {
-        printf("get_command must be provided a buffer of size MAXLEN!");
+        puts("[Get_command must be provided a buffer of size MAXLEN!]");
         return 1;
     }
     char userinput[MAXLEN];
@@ -30,7 +30,7 @@ int get_command(enum commandtype *type, char* body, int maxlen)
 
     if (count != 2)
     {
-        write_output("[Error parsing user input!]");
+        puts("[Error parsing user input!]");
         return 1;
     }
 
@@ -52,7 +52,7 @@ int get_command(enum commandtype *type, char* body, int maxlen)
     }
     else
     {
-        write_output("[Invalid command!]");
+        puts("[Invalid command!]");
         return 1;
     }
 
@@ -65,9 +65,3 @@ void prompt_command(char* input, int maxlen)
     fgets(input, maxlen, stdin);
 }
 
-void write_output(char* output)
-{
-    printf("\n>>> ");
-    printf(output);
-    printf("\n");
-}
