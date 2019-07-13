@@ -2,8 +2,8 @@
 // Created by matt on 7/12/19.
 //
 
-#ifndef UDPCHAT_CLIENT_TO_SERVER_H
-#define UDPCHAT_CLIENT_TO_SERVER_H
+#ifndef UDPCHAT_SENDER_TOSERVER_H
+#define UDPCHAT_SENDER_TOSERVER_H
 
 #include <arpa/inet.h>
 
@@ -11,4 +11,4 @@ int register_client(int socketfide_out, struct sockaddr_in, char* myname, int li
 int deregister_client(int socketfide_out, struct sockaddr_in, char* myname);
 int offline_message(int socketfide_out, struct sockaddr_in, char* myname, char* toname, char* message);
 
-#endif //UDPCHAT_CLIENT_TO_SERVER_H
+#endif //UDPCHAT_SENDER_TOSERVER_H

@@ -10,8 +10,9 @@
 
 #include "../udpchat.h"
 #include "shell/shell.h"
-#include "client_to_server.h"
+#include "sender_toserver.h"
 #include "listener.h"
+#include "sender_topeer.h"
 
 int start_client(char* nickname, char* serverip, int serverport, int clientport)
 {
@@ -76,17 +77,17 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
             continue;
         if (command == quit)
             break;
-        else if (command == sendmsg)
+        else if (command == message)
         {
-            write_output("[Sending messages is not yet implemented!]");
+            send_message(sockfide_out, nickname, buffer);
         }
         else if (command == reg)
         {
-            register_client(sockfide_out, servaddr, nickname, clientport);
+            register_client(sockfide_out, servaddr, buffer, clientport);
         }
         else if (command == dereg)
         {
-            deregister_client(sockfide_out, servaddr, nickname);
+            deregister_client(sockfide_out, servaddr, buffer);
         }
     }
     return 0;

@@ -33,7 +33,7 @@ void *listen_handler(void* socketfide)
             memset(&outpacket, 0, sizeof(outpacket));
             strncpy(outpacket.type, "ACK", strlen("ACK"));
             int bytes_sent = sendto(
-                    socketfide,
+                    (int)socketfide,
                     &outpacket,
                     sizeof(outpacket),
                     0,
