@@ -67,12 +67,17 @@ int deregister_client(int socketfide_out, struct sockaddr_in servaddr, char* nic
     {
         printf("[ERROR SENDING DEREGISTRATION]\n>>> ");
     }
-    usleep(500000);
-    if (*acked)
+    int count = 0;
+    while (count < 5)
     {
-        *acked=false;
-        printf("[You are offline. Bye.]\n>>> ");
-        return 0;
+        usleep(500000);
+        if (*acked)
+        {
+            *acked=false;
+            printf("[You are offline. Bye.]\n>>> ");
+            return 0;
+        }
+        count++;
     }
     printf("[No ack from server, you are NOT registered.]\n>>> ");
     printf("[Server not responding]\n>>> ");
