@@ -14,12 +14,19 @@
 #include "sender_toserver.h"
 #include "listener.h"
 #include "sender_topeer.h"
+#include "../usertable.h"
 
 int start_client(char* nickname, char* serverip, int serverport, int clientport)
 {
-    int sockfide; /// listener socket file descriptor
-    struct sockaddr_in myaddr; /// my address?
+    int sockfide; /// socket file descriptor
+    struct sockaddr_in myaddr; /// my address
     bool acked = false;
+
+    if (initialize_user_table())
+    {
+        puts(">>> [Failed to initialize user table!]");
+        return 1;
+    }
 
     /// create socket
     if ((sockfide = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
@@ -50,7 +57,7 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
     servaddr.sin_addr.s_addr = inet_addr(serverip);
 
     /// send registration request to server
-    if (register_client(sockfide, servaddr, nickname))
+    if (register_client(sockfide, servaddr, nickname, &acked))
     {
         return 1;
     }
@@ -78,11 +85,11 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
         }
         else if (command == reg)
         {
-            register_client(sockfide, servaddr, buffer);
+            register_client(sockfide, servaddr, buffer, &acked);
         }
         else if (command == dereg)
         {
-            deregister_client(sockfide, servaddr, buffer);
+            deregister_client(sockfide, servaddr, buffer, &acked);
         }
     }
     return 0;

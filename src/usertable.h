@@ -10,6 +10,7 @@
 #include <arpa/inet.h>
 
 #define TABLEFILENAME "user_table.txt"
+#define MAXUSERS 16 /// max 16 users so that user_table will fit in message field of packet
 
 struct table_entry
 {
@@ -19,7 +20,10 @@ struct table_entry
     bool status;
 };
 
+struct table_entry user_table[MAXUSERS]; //define in header so that can be read or overwritten easily
+
+int initialize_user_table();
 struct table_entry lookup_table_entry(char* nickname);
-int insert_table_entry(struct table_entry);
+int upsert_table_entry(struct table_entry);
 
 #endif //UDPCHAT_USERTABLE_H

@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "sender_topeer.h"
+#include "../usertable.h"
 
 void *listen_handler(void* args)
 {
@@ -42,8 +43,16 @@ void *listen_handler(void* args)
             *acked = true;
         }
 
+        if (strcmp(inpacket.type, "TABLE") == 0)
+        {
+            memcpy(user_table, inpacket.message, sizeof(user_table));
+        }
+
         if (bytes < 0)
         {
+            puts("[Listener failure. Exiting.]");
+            printf(">>> ");
+            fflush(stdout);
             return 1;
         }
     }

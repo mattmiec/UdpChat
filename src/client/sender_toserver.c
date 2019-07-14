@@ -8,12 +8,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
-int register_client(int socketfide_out, struct sockaddr_in servaddr, char* myname)
+int register_client(int socketfide_out, struct sockaddr_in servaddr, char* myname, bool* acked)
 {
     struct packet outpacket;
     memset(&outpacket, 0, sizeof(outpacket));
-    strncpy(outpacket.type, "REGISTER", strlen("REGISTER"));
+    strncpy(outpacket.type, "REG", strlen("REG"));
     strncpy(outpacket.fromname, myname, strlen(myname));
     int bytes_sent = sendto(
             socketfide_out,
@@ -25,14 +26,20 @@ int register_client(int socketfide_out, struct sockaddr_in servaddr, char* mynam
             );
     if (bytes_sent < 0)
     {
-        puts(">>> [Failed to register.]");
-        return 1;
+        puts(">>> [ERROR SENDING REGISTRATION]");
     }
-    puts(">>> [Welcome, you are registered.]");
+    usleep(500000);
+    if (*acked)
+    {
+        *acked=false;
+        puts(">>> [Welcome, you are registered.]");
+        return 0;
+    }
+    puts(">>> [No ack from server, you are NOT registered.]");
     return 0;
 }
 
-int deregister_client(int socketfide_out, struct sockaddr_in servaddr, char* myname)
+int deregister_client(int socketfide_out, struct sockaddr_in servaddr, char* myname, bool* acked)
 {
     struct packet outpacket;
     memset(&outpacket, 0, sizeof(outpacket));
@@ -48,12 +55,19 @@ int deregister_client(int socketfide_out, struct sockaddr_in servaddr, char* myn
     );
     if (bytes_sent < 0)
     {
-        puts(">>> [Server not responding]");
-        puts(">>> [Exiting]");
-        exit(1);
+        puts(">>> [ERROR SENDING DEREGISTRATION]");
     }
-    puts(">>> [You are offline. Bye.]");
-    return 0;
+    usleep(500000);
+    if (*acked)
+    {
+        *acked=false;
+        puts(">>> [You are offline. Bye.]");
+        return 0;
+    }
+    puts(">>> [No ack from server, you are NOT registered.]");
+    puts(">>> [Server not responding]");
+    puts(">>> [Exiting]");
+    exit(1);
 }
 
 int offline_message(int socketfide_out, struct sockaddr_in servaddr, char* myname, char* toname, char* message)
