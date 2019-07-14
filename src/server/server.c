@@ -105,6 +105,59 @@ int start_server(int port)
             }
         }
 
+        if (strcmp(inpacket.type, "DEREG") == 0)
+        {
+            /// first update user table
+            struct table_entry new_table_entry;
+            memset(&new_table_entry, 0, sizeof(new_table_entry));
+            strcpy(new_table_entry.nickname, inpacket.fromname);
+            new_table_entry.ip_addr = clientaddr.sin_addr.s_addr;
+            new_table_entry.port = ntohs(clientaddr.sin_port);
+            new_table_entry.status = false;
+            if (upsert_table_entry(new_table_entry))
+                return 1;
+            printf("REGISTERED USER %s\n", inpacket.fromname);
+            /// construct and send ack packet
+            memset(&outpacket, 0, sizeof(outpacket));
+            strncpy(outpacket.type, "ACK", strlen("ACK"));
+            int bytes_sent = sendto(
+                    sockfide,
+                    &outpacket,
+                    sizeof(outpacket),
+                    0,
+                    (const struct sockaddr*)&clientaddr,
+                    sizeof(clientaddr)
+            );
+            if (bytes_sent < 0)
+                return 1;
+            /// then iterate through registered users and sent them updated table
+            memset(&outpacket, 0, sizeof(outpacket));
+            strncpy(outpacket.type, "TABLE", strlen("TABLE"));
+            memcpy(outpacket.message, user_table, sizeof(user_table));
+            for (int i = 0; i < MAXUSERS; i++)
+            {
+                if (user_table[i].nickname[i] != '\0')
+                {
+                    /// fill in peer info
+                    memset(&clientaddr, 0, sizeof(clientaddr));
+                    clientaddr.sin_family = AF_INET;
+                    clientaddr.sin_port = htons(user_table[i].port);
+                    clientaddr.sin_addr.s_addr = user_table[i].ip_addr;
+
+                    int bytes_sent = sendto(
+                            sockfide,
+                            &outpacket,
+                            sizeof(outpacket),
+                            0,
+                            (const struct sockaddr*)&clientaddr,
+                            sizeof(clientaddr)
+                    );
+                    if (bytes_sent < 0)
+                        return 1;
+                }
+            }
+        }
+
         if (bytes < 0)
         {
             puts("[Listener failure. Exiting.]");

@@ -31,12 +31,13 @@ void *listen_handler(void* args)
             strcpy(buffer, inpacket.fromname);
             strcat(buffer, ": ");
             strcat(buffer, inpacket.message);
+            send_ack(socketfide, inpacket.toname, inpacket.fromname);
+
+            usleep(600000);
             puts(buffer);
             printf(">>> ");
             fflush(stdout);
             free(buffer);
-
-            send_ack(socketfide, inpacket.toname, inpacket.fromname);
         }
 
         if (strcmp(inpacket.type, "ACK") == 0)
@@ -54,6 +55,7 @@ void *listen_handler(void* args)
 
         if (bytes < 0)
         {
+            usleep(600000);
             puts("[Listener failure. Exiting.]");
             printf(">>> ");
             fflush(stdout);
