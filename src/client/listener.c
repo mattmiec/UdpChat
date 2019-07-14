@@ -48,7 +48,7 @@ void *listen_handler(void* args)
         {
             usleep(600000);
             memcpy(user_table, inpacket.message, sizeof(user_table));
-            printf("[Client table updated.]\n>>>");
+            printf("[Client table updated.]\n>>> ");
             fflush(stdout);
         }
 
