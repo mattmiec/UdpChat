@@ -56,11 +56,6 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
     servaddr.sin_port = htons(serverport);
     servaddr.sin_addr.s_addr = inet_addr(serverip);
 
-    /// send registration request to server
-    if (register_client(sockfide, servaddr, nickname, &acked))
-    {
-        return 1;
-    }
 
     /// start listener thread
     pthread_t listener_thread;
@@ -68,6 +63,12 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
     args.socketfide = sockfide;
     args.acked = &acked;
     pthread_create(&listener_thread, NULL, listen_handler, (void*) &args);
+
+    /// send registration request to server
+    if (register_client(sockfide, servaddr, nickname, &acked))
+    {
+        return 1;
+    }
 
     /// start shell and handle shell commands
     char buffer[MAXLEN];
