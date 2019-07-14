@@ -46,6 +46,8 @@ void *listen_handler(void* args)
         if (strcmp(inpacket.type, "TABLE") == 0)
         {
             memcpy(user_table, inpacket.message, sizeof(user_table));
+            printf("[Client table updated.]\n >>>");
+            fflush(stdout);
         }
 
         if (bytes < 0)
