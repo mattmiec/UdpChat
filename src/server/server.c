@@ -79,7 +79,8 @@ int start_server(int port)
                 return 1;
             /// then iterate through registered users and sent them updated table
             memset(&outpacket, 0, sizeof(outpacket));
-            memcpy(user_table, outpacket.message, sizeof(user_table));
+            strncpy(outpacket.type, "TABLE", strlen("TABLE"));
+            memcpy(outpacket.message, user_table, sizeof(user_table));
             for (int i = 0; i < MAXUSERS; i++)
             {
                 if (user_table[i].nickname[i] != '\0')
