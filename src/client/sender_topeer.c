@@ -51,17 +51,17 @@ int send_message(int socketfide_out, char* myname, char* sendcommand, bool* acke
     );
     if (bytes_sent < 0)
     {
-        printf(">>> [Failed to send message to %s.]\n", toname);
+        printf("[Failed to send message to %s.]\n>>> ", toname);
         return 1;
     }
     usleep(500000);
     if (*acked)
     {
         *acked=false;
-        printf(">>> [Message received by %s.]\n", toname);
+        printf("[Message received by %s.]\n>>> ", toname);
         return 0;
     }
-    printf(">>> [No ACK from %s, message sent to server.]\n", toname);
+    printf("[No ACK from %s, message sent to server.]\n>>> ", toname);
     offline_message(socketfide_out, servaddr, myname, toname, message);
     return 0;
 

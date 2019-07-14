@@ -26,16 +26,16 @@ int register_client(int socketfide_out, struct sockaddr_in servaddr, char* mynam
             );
     if (bytes_sent < 0)
     {
-        puts(">>> [ERROR SENDING REGISTRATION]");
+        printf("[ERROR SENDING REGISTRATION]\n>>> ");
     }
     usleep(500000);
     if (*acked)
     {
         *acked=false;
-        puts(">>> [Welcome, you are registered.]");
+        printf("[Welcome, you are registered.]\n>>> ");
         return 0;
     }
-    puts(">>> [No ack from server, you are NOT registered.]");
+    printf("[No ack from server, you are NOT registered.]\n>>> ");
     return 0;
 }
 
@@ -55,18 +55,18 @@ int deregister_client(int socketfide_out, struct sockaddr_in servaddr, char* myn
     );
     if (bytes_sent < 0)
     {
-        puts(">>> [ERROR SENDING DEREGISTRATION]");
+        printf("[ERROR SENDING DEREGISTRATION]\n>>> ");
     }
     usleep(500000);
     if (*acked)
     {
         *acked=false;
-        puts(">>> [You are offline. Bye.]");
+        printf("[You are offline. Bye.]\n>>> ");
         return 0;
     }
-    puts(">>> [No ack from server, you are NOT registered.]");
-    puts(">>> [Server not responding]");
-    puts(">>> [Exiting]");
+    printf("[No ack from server, you are NOT registered.]\n>>> ");
+    printf("[Server not responding]\n>>> ");
+    printf("[Exiting]");
     exit(1);
 }
 
@@ -87,10 +87,10 @@ int offline_message(int socketfide_out, struct sockaddr_in servaddr, char* mynam
             sizeof(servaddr)
     );
     if (bytes_sent < 0) {
-        puts(">>> [Failed to send to server]");
-        puts(">>> [Exiting]");
+        printf("[Failed to send to server]\n>>> ");
+        printf("[Exiting]");
         exit(1);
     }
-    puts(">>> [Message received by the server and saved]");
+    printf("[Message received by the server and saved]\n>>> ");
     return 0;
 }

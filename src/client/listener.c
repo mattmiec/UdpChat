@@ -32,8 +32,6 @@ void *listen_handler(void* args)
             strcat(buffer, ": ");
             strcat(buffer, inpacket.message);
             send_ack(socketfide, inpacket.toname, inpacket.fromname);
-
-            usleep(600000);
             puts(buffer);
             printf(">>> ");
             fflush(stdout);
@@ -47,7 +45,7 @@ void *listen_handler(void* args)
 
         if (strcmp(inpacket.type, "TABLE") == 0)
         {
-            usleep(600000);
+            usleep(500000);
             memcpy(user_table, inpacket.message, sizeof(user_table));
             printf("[Client table updated.]\n>>> ");
             fflush(stdout);
@@ -55,7 +53,6 @@ void *listen_handler(void* args)
 
         if (bytes < 0)
         {
-            usleep(600000);
             puts("[Listener failure. Exiting.]");
             printf(">>> ");
             fflush(stdout);

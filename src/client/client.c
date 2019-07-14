@@ -64,6 +64,7 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
     args.acked = &acked;
     pthread_create(&listener_thread, NULL, listen_handler, (void*) &args);
 
+    printf(">>> ");
     /// send registration request to server
     if (register_client(sockfide, servaddr, nickname, &acked))
     {
@@ -76,6 +77,7 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
     while (1)
     {
         int err = get_command(&command, buffer, MAXLEN);
+        printf(">>> ");
         if (err)
             continue;
         if (command == quit)

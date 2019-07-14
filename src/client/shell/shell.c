@@ -61,7 +61,6 @@ int get_command(enum commandtype *type, char* body, int maxlen)
 
 void prompt_command(char* input, int maxlen)
 {
-    printf(">>> ");
     fgets(input, maxlen, stdin);
 }
 
