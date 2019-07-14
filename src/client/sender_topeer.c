@@ -23,9 +23,29 @@ int send_message(int socketfide_out, char* myname, char* sendcommand, bool* acke
 
     int count = sscanf(sendcommand, "%16s %[^\n]2048s", toname, message);
 
-    /// fill in peer info
-    struct sockaddr_in peeraddr;
+    /// get peer status
     struct table_entry peer_table_entry = lookup_table_entry(toname);
+
+    /// if peer is offline send messages to server
+    if (!peer_table_entry.status)
+    {
+        printf("[%s is offline, sending message to server.]\n>>> ", toname);
+        offline_message(socketfide_out, servaddr, myname, toname, message);
+        usleep(500000);
+        if (*acked)
+        {
+            *acked=false;
+            printf("[Message received by server and saved.]\n>>> ");
+        }
+        else
+        {
+            printf("[Message sent to server but not acknowledged.]\n>>> ");
+        }
+        return 0;
+    }
+
+    /// fill in peer address
+    struct sockaddr_in peeraddr;
     memset(&peeraddr, 0, sizeof(peeraddr));
     peeraddr.sin_family = AF_INET;
     peeraddr.sin_port = htons(peer_table_entry.port);

@@ -27,17 +27,9 @@ void *listen_handler(void* args)
 
         if (strcmp(inpacket.type, "MESSAGE") == 0)
         {
-            ///char* buffer = malloc(strlen(inpacket.fromname) + strlen(": ") + strlen(inpacket.message));
-            ///strcpy(buffer, inpacket.fromname);
-            ///strcat(buffer, ": ");
-            ///strcat(buffer, inpacket.message);
-
             /// write output
-            ///puts(buffer);
             printf("%s: %s\n>>> ", inpacket.fromname, inpacket.message);
             fflush(stdout);
-
-            ///free(buffer);
 
             send_ack(socketfide, inpacket.toname, inpacket.fromname);
             /// construct and send ack packet
@@ -70,6 +62,11 @@ void *listen_handler(void* args)
             memcpy(user_table, inpacket.message, sizeof(user_table));
             printf("[Client table updated.]\n>>> ");
             fflush(stdout);
+        }
+
+        if (strcmp(inpacket.type, "GOTMAIL") == 0)
+        {
+            printf("[You have messages.]\n>>> ");
         }
 
         if (bytes < 0)
