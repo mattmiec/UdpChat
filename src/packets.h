@@ -13,8 +13,6 @@
 
 struct packet
 {
-    int32_t ackport;
-    int32_t listenerport;
     char type[LENTYPE]; // packet type
     char fromname[LENNAME]; // nickname of user sending request
     char toname[LENNAME]; // (optional) nickname of message recipient if packet type is "OFFLINE"

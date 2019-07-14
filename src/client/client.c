@@ -50,7 +50,7 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
     servaddr.sin_addr.s_addr = inet_addr(serverip);
 
     /// send registration request to server
-    if (register_client(sockfide, servaddr, nickname, clientport))
+    if (register_client(sockfide, servaddr, nickname))
     {
         return 1;
     }
@@ -78,7 +78,7 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
         }
         else if (command == reg)
         {
-            register_client(sockfide, servaddr, buffer, clientport);
+            register_client(sockfide, servaddr, buffer);
         }
         else if (command == dereg)
         {

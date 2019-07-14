@@ -35,7 +35,6 @@ int send_message(int socketfide_out, char* myname, char* sendcommand, bool* acke
     /// construct and send message packet
     struct packet outpacket;
     memset(&outpacket, 0, sizeof(outpacket));
-    outpacket.ackport = 0;
     strncpy(outpacket.type, "MESSAGE", strlen("MESSAGE"));
     strncpy(outpacket.fromname, myname, strlen(myname));
     strncpy(outpacket.toname, toname, strlen(toname));

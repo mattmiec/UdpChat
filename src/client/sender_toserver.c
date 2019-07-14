@@ -9,12 +9,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int register_client(int socketfide_out, struct sockaddr_in servaddr, char* myname, int listenerport)
+int register_client(int socketfide_out, struct sockaddr_in servaddr, char* myname)
 {
     struct packet outpacket;
     memset(&outpacket, 0, sizeof(outpacket));
-    outpacket.ackport = 0;
-    outpacket.listenerport = listenerport;
     strncpy(outpacket.type, "REGISTER", strlen("REGISTER"));
     strncpy(outpacket.fromname, myname, strlen(myname));
     int bytes_sent = sendto(
@@ -38,7 +36,6 @@ int deregister_client(int socketfide_out, struct sockaddr_in servaddr, char* myn
 {
     struct packet outpacket;
     memset(&outpacket, 0, sizeof(outpacket));
-    outpacket.ackport = 0;
     strncpy(outpacket.type, "DEREG", strlen("DEREG"));
     strncpy(outpacket.fromname, myname, strlen(myname));
     int bytes_sent = sendto(
@@ -63,7 +60,6 @@ int offline_message(int socketfide_out, struct sockaddr_in servaddr, char* mynam
 {
     struct packet outpacket;
     memset(&outpacket, 0, sizeof(outpacket));
-    outpacket.ackport = 0;
     strncpy(outpacket.type, "MESSAGE", strlen("MESSAGE"));
     strncpy(outpacket.fromname, myname, strlen(myname));
     strncpy(outpacket.toname, toname, strlen(toname));
