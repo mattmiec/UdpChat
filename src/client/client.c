@@ -66,7 +66,7 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
 
     printf(">>> ");
     /// send registration request to server
-    if (register_client(sockfide, servaddr, nickname, &acked))
+    if (register_client(sockfide, servaddr, nickname, nickname, &acked))
     {
         return 1;
     }
@@ -88,11 +88,11 @@ int start_client(char* nickname, char* serverip, int serverport, int clientport)
         }
         else if (command == reg)
         {
-            register_client(sockfide, servaddr, buffer, &acked);
+            register_client(sockfide, servaddr, nickname, buffer, &acked);
         }
         else if (command == dereg)
         {
-            deregister_client(sockfide, servaddr, buffer, &acked);
+            deregister_client(sockfide, servaddr, nickname, buffer, &acked);
         }
     }
     return 0;

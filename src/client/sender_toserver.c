@@ -10,12 +10,17 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int register_client(int socketfide_out, struct sockaddr_in servaddr, char* myname, bool* acked)
+int register_client(int socketfide_out, struct sockaddr_in servaddr, char* nickname, char* cname, bool* acked)
 {
+    if (strcmp(nickname, cname) != 0)
+    {
+       printf("[You may only register with your previous username.]\n>>> ");
+       return 0;
+    }
     struct packet outpacket;
     memset(&outpacket, 0, sizeof(outpacket));
     strncpy(outpacket.type, "REG", strlen("REG"));
-    strncpy(outpacket.fromname, myname, strlen(myname));
+    strncpy(outpacket.fromname, nickname, strlen(nickname));
     int bytes_sent = sendto(
             socketfide_out,
             &outpacket,
@@ -39,12 +44,17 @@ int register_client(int socketfide_out, struct sockaddr_in servaddr, char* mynam
     return 0;
 }
 
-int deregister_client(int socketfide_out, struct sockaddr_in servaddr, char* myname, bool* acked)
+int deregister_client(int socketfide_out, struct sockaddr_in servaddr, char* nickname, char* cname, bool* acked)
 {
+    if (strcmp(nickname, cname) != 0)
+    {
+        printf("[You may only deregister with your current username.]\n>>> ");
+        return 0;
+    }
     struct packet outpacket;
     memset(&outpacket, 0, sizeof(outpacket));
     strncpy(outpacket.type, "DEREG", strlen("DEREG"));
-    strncpy(outpacket.fromname, myname, strlen(myname));
+    strncpy(outpacket.fromname, nickname, strlen(nickname));
     int bytes_sent = sendto(
             socketfide_out,
             &outpacket,

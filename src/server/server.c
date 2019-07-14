@@ -54,7 +54,26 @@ int start_server(int port)
 
         if (strcmp(inpacket.type, "REG") == 0)
         {
-            /// first update user table
+            /// first check that username is not a duplicate)
+            bool duplicate = false;
+            struct table_entry check_table_entry = lookup_table_entry(inpacket.fromname);
+            if (strcmp(check_table_entry.nickname, inpacket.fromname) == 0)
+            {
+                /// if we're here then there an entry exists, but we don't know if this is the user re-registering
+                /// or if it's another user attempting to register with the same username
+                /// use ip and port to distinguish
+                if ((clientaddr.sin_addr.s_addr != check_table_entry.ip_addr)
+                   || (ntohs(clientaddr.sin_port) != check_table_entry.port))
+                {
+                    duplicate = true;
+                }
+            }
+            if (duplicate)
+            {
+                /// if it's a duplicate, just stop here, client will not receive ack and will know it's not registered
+                continue;
+            }
+            /// then update user table
             struct table_entry new_table_entry;
             memset(&new_table_entry, 0, sizeof(new_table_entry));
             strcpy(new_table_entry.nickname, inpacket.fromname);
