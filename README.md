@@ -4,6 +4,17 @@
 - CSEE S4119 Computer Networks
 - PA1 - UdpChat
 
+#Overview
+- UdpChat is a simple command-line chat application built using udp sockets
+- To start a client: ./UdpChat -c <nick-name> <server-ip> <server-port> <client-port>
+- To start a server: ./UdpChat -s <server-port>
+- To send a message: send <nick-name> message...
+- To deregister (go offline): dereg <nick-name>
+- To reregister (go back online): reg <nick-name>
+- To exit: exit (or ctrl-c)
+- The UdpChat server stores messages while you are offline, you will receive them when you reregister
+- Note: UdpChat is a connectionless application and will not be reliable on lossy networks
+
 #Implementation Details
 - UdpChat uses fixed size udp packets to communicate between clients and server
 - Each client binds a socket to the specified port and sends and receives all messages via this socket
