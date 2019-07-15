@@ -1,0 +1,85 @@
+mtm2163
+Matt Miecnikowski
+CSEE S4119 Computer Networks
+PA1 - UdpChat
+Interactive Test Example
+
+Server:
+/home/matt/CLionProjects/UdpChat/cmake-build-debug/UdpChat -s 2000
+SERVER SUCCESSFULLY STARTED
+RECEIVED PACKET FROM matt1
+REGISTERED USER matt1
+RECEIVED PACKET FROM matt2
+REGISTERED USER matt2
+RECEIVED PACKET FROM matt1
+DEREGISTERED USER matt1
+RECEIVED PACKET FROM matt2
+SAVED MESSAGE FOR USER matt1
+RECEIVED PACKET FROM matt2
+SAVED MESSAGE FOR USER matt1
+RECEIVED PACKET FROM matt1
+REGISTERED USER matt1
+
+
+User 1 (matt1):
+./UdpChat -c matt1 127.0.0.1 2000 2001
+>>> [Welcome, you are registered.]
+>>> [Client table updated.]
+>>> [Client table updated.]
+>>> send matt1 test message to myself
+>>> matt1: test message to myself
+>>> [Message received by matt1.]
+>>> send matt2 test message to matt2
+>>> [Message received by matt2.]
+>>> send matt2 here's another test message
+>>> [Message received by matt2.]
+>>> matt2: I guess I should send a message back
+>>> matt2: and another!
+>>> matt2: UdpChat seems to work really well!
+>>> send matt2 I totally agree!
+>>> [Message received by matt2.]
+>>> send matt2 See you later!
+>>> [Message received by matt2.]
+>>> dereg matt1
+>>> [You are offline. Bye.]
+>>> [Client table updated.]
+>>> reg matt1
+>>> [Welcome, you are registered.]
+>>> [Client table updated.]
+>>> [You have messages.]
+>>> matt2: [2019-07-15 19:20:55] where'd you go?
+>>> matt2: [2019-07-15 19:21:30] I guess you'll get these messages when you're back
+>>> send matt2 I did!
+>>> [Message received by matt2.]
+>>> 
+
+
+User2 (matt2):
+./UdpChat -c matt2 127.0.0.1 2000 2002
+>>> [Welcome, you are registered.]
+>>> [Client table updated.]
+>>> matt1: test message to matt2
+>>> matt1: here's another test message
+>>> send matt1 I guess I should send a message back
+s>>> [Message received by matt1.]
+>>> send matt1 and another!
+[Invalid command!]
+>>> send matt1 and another!
+>>> [Message received by matt1.]
+>>> send matt3 let's try sending to a nonexistent user!
+>>> [Client matt3 not found!]
+>>> send matt1 UdpChat seems to work really well!
+>>> [Message received by matt1.]
+>>> matt1: I totally agree!
+>>> matt1: See you later!
+>>> [Client table updated.]
+>>> send matt1 where'd you go?
+>>> [Client matt1 is offline, sending message to server.]
+>>> [Message received by the server and saved.]
+>>> send matt1 I guess you'll get these messages when you're back
+>>> [Client matt1 is offline, sending message to server.]
+>>> [Message received by the server and saved.]
+>>> [Client table updated.]
+>>> matt1: I did!
+>>> 
+
