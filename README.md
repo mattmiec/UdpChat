@@ -15,6 +15,11 @@
 - The UdpChat server stores messages while you are offline, you will receive them when you reregister
 - Note: UdpChat is a connectionless application and will not be reliable on lossy networks
 
+#How to Build
+- If you have not receieved a distribution with a makefile, you must first create one by executing: cmake
+<path-to-udpchat>
+- When you have a makefile, simply execute: make
+
 #Implementation Details
 - UdpChat uses fixed size udp packets to communicate between clients and server
 - Each client binds a socket to the specified port and sends and receives all messages via this socket
