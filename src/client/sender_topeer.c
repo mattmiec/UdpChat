@@ -36,17 +36,8 @@ int send_message(int socketfide_out, char* myname, char* sendcommand, bool* acke
     /// if peer is offline send messages to server
     if (!peer_table_entry.status)
     {
-        printf("[User %s is offline, sending message to server.]\n>>> ", toname);
-        offline_message(socketfide_out, servaddr, myname, toname, message, acked);
-        usleep(500000);
-        if (*acked)
-        {
-            *acked=false;
-            printf("[Message received by server and saved.]\n>>> ");
-            return 0;
-        }
-        printf("[Message sent to server but not acknowledged.]\n>>> ");
-        return 0;
+        printf("[Client %s is offline, sending message to server.]\n>>> ", toname);
+        return offline_message(socketfide_out, servaddr, myname, toname, message, acked);
     }
 
     /// fill in peer address
@@ -87,9 +78,7 @@ int send_message(int socketfide_out, char* myname, char* sendcommand, bool* acke
         return 0;
     }
     printf("[No ACK from %s, message sent to server.]\n>>> ", toname);
-    offline_message(socketfide_out, servaddr, myname, toname, message, acked);
-    return 0;
-
+    return offline_message(socketfide_out, servaddr, myname, toname, message, acked);
 }
 
 int send_ack(int socketfide_out, char* myname, char* toname)

@@ -248,6 +248,19 @@ int start_server(int port)
             /// write <sender> [<timestamp>] <message>
             fprintf(fp, "%s [%s] %s\n", inpacket.fromname, buffer, inpacket.message);
             fclose(fp);
+            /// construct and send ack packet
+            memset(&outpacket, 0, sizeof(outpacket));
+            strcpy(outpacket.type, "ACK");
+            int bytes_sent = sendto(
+                    sockfide,
+                    &outpacket,
+                    sizeof(outpacket),
+                    0,
+                    (const struct sockaddr*)&clientaddr,
+                    sizeof(clientaddr)
+            );
+            if (bytes_sent < 0)
+                return 1;
         }
 
         if (bytes < 0)
