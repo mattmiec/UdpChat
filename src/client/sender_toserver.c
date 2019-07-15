@@ -114,6 +114,6 @@ int offline_message(int socketfide_out, struct sockaddr_in servaddr, char* mynam
         return 0;
     }
     /// if no ack assume server rejected request because peer is actually online
-    printf("[Client %s exists!!]\n>>> ", toname);
+    printf("[Client %s is online!]\n>>> ", toname);
     return 0;
 }

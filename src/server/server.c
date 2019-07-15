@@ -183,7 +183,7 @@ int start_server(int port)
             new_table_entry.status = false;
             if (upsert_table_entry(new_table_entry))
                 return 1;
-            printf("REGISTERED USER %s\n", inpacket.fromname);
+            printf("DEREGISTERED USER %s\n", inpacket.fromname);
             /// construct and send ack packet
             memset(&outpacket, 0, sizeof(outpacket));
             strcpy(outpacket.type, "ACK");
@@ -248,6 +248,7 @@ int start_server(int port)
             /// write <sender> [<timestamp>] <message>
             fprintf(fp, "%s [%s] %s\n", inpacket.fromname, buffer, inpacket.message);
             fclose(fp);
+            printf("SAVED MESSAGE FOR USER %s\n", inpacket.toname);
             /// construct and send ack packet
             memset(&outpacket, 0, sizeof(outpacket));
             strcpy(outpacket.type, "ACK");
