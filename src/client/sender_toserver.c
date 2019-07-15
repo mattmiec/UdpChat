@@ -85,7 +85,7 @@ int deregister_client(int socketfide_out, struct sockaddr_in servaddr, char* nic
     exit(1);
 }
 
-int offline_message(int socketfide_out, struct sockaddr_in servaddr, char* myname, char* toname, char* message)
+int offline_message(int socketfide_out, struct sockaddr_in servaddr, char* myname, char* toname, char* message, bool* acked)
 {
     struct packet outpacket;
     memset(&outpacket, 0, sizeof(outpacket));
@@ -106,6 +106,14 @@ int offline_message(int socketfide_out, struct sockaddr_in servaddr, char* mynam
         printf("[Exiting]");
         exit(1);
     }
-    printf("[Message received by the server and saved]\n>>> ");
+    usleep(500000);
+    if (*acked)
+    {
+        *acked=false;
+        printf("[Message received by the server and saved.]\n>>> ");
+        return 0;
+    }
+    /// if no ack assume server rejected request because peer is actually online
+    printf("[Client %s exists!!]\n>>> ", toname);
     return 0;
 }

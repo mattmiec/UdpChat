@@ -227,6 +227,11 @@ int start_server(int port)
 
         if (strcmp(inpacket.type, "MESSAGE") == 0)
         {
+            /// first check that recipient is actually offline
+            struct table_entry rec_table_entry = lookup_table_entry(inpacket.toname);
+            if (rec_table_entry.status)
+                continue; /// ignore invalid save-message request if recipient is online
+
             /// open recipient's file for appending
             char filename[20];
             memset(filename, 0, 20);

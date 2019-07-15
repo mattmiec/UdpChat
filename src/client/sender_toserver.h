@@ -10,6 +10,6 @@
 
 int register_client(int socketfide_out, struct sockaddr_in servaddr, char* nickname, char* cname, bool* acked);
 int deregister_client(int socketfide_out, struct sockaddr_in servaddr, char* nickname, char* cname, bool* acked);
-int offline_message(int socketfide_out, struct sockaddr_in servaddr, char* myname, char* toname, char* message);
+int offline_message(int socketfide_out, struct sockaddr_in servaddr, char* myname, char* toname, char* message, bool* acked);
 
 #endif //UDPCHAT_SENDER_TOSERVER_H

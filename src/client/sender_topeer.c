@@ -26,11 +26,18 @@ int send_message(int socketfide_out, char* myname, char* sendcommand, bool* acke
     /// get peer status
     struct table_entry peer_table_entry = lookup_table_entry(toname);
 
+    /// print error if peer not found
+    if (peer_table_entry.nickname[0] == '\0')
+    {
+        printf("[Client %s not found!]\n>>> ", toname);
+        return 0;
+    }
+
     /// if peer is offline send messages to server
     if (!peer_table_entry.status)
     {
         printf("[User %s is offline, sending message to server.]\n>>> ", toname);
-        offline_message(socketfide_out, servaddr, myname, toname, message);
+        offline_message(socketfide_out, servaddr, myname, toname, message, acked);
         usleep(500000);
         if (*acked)
         {
@@ -80,7 +87,7 @@ int send_message(int socketfide_out, char* myname, char* sendcommand, bool* acke
         return 0;
     }
     printf("[No ACK from %s, message sent to server.]\n>>> ", toname);
-    offline_message(socketfide_out, servaddr, myname, toname, message);
+    offline_message(socketfide_out, servaddr, myname, toname, message, acked);
     return 0;
 
 }
