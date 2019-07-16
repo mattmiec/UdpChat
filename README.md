@@ -4,7 +4,7 @@
 - CSEE S4119 Computer Networks
 - PA1 - UdpChat
 
-#Overview
+##Overview
 - UdpChat is a simple command-line chat application built using udp sockets
 - To start a client: ./UdpChat -c <nick-name> <server-ip> <server-port> <client-port>
 - To start a server: ./UdpChat -s <server-port>
@@ -15,12 +15,12 @@
 - The UdpChat server stores messages while you are offline, you will receive them when you reregister
 - Note: UdpChat is a connectionless application and will not be reliable on lossy networks
 
-#How to Build
+##How to Build
 - If you have not receieved a distribution with a makefile, you must first create one by executing: cmake
 <path-to-udpchat>
 - When you have a makefile, simply execute: make
 
-#Implementation Details
+##Implementation Details
 - UdpChat uses fixed size udp packets to communicate between clients and server
 - Each client binds a socket to the specified port and sends and receives all messages via this socket
 - The server also uses one socket bound to the specified port for all communication
