@@ -52,8 +52,6 @@ int start_server(int port)
         socklen_t fromlen = sizeof(clientaddr);
         int bytes = recvfrom(sockfide, (void *)&inpacket, sizeof(inpacket), 0, (struct sockaddr*)&clientaddr, &fromlen);
 
-        printf("RECEIVED PACKET FROM %s\n", inpacket.fromname);
-
         if (strcmp(inpacket.type, "REG") == 0)
         {
             /// first check that username is not a duplicate)
