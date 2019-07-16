@@ -31,11 +31,11 @@ void *listen_handler(void* args)
             printf("%s: %s\n>>> ", inpacket.fromname, inpacket.message);
             fflush(stdout);
 
-            send_ack(socketfide, inpacket.toname, inpacket.fromname);
             /// construct and send ack packet
             struct packet outpacket;
             memset(&outpacket, 0, sizeof(outpacket));
-            strncpy(outpacket.type, "ACK", strlen("ACK"));
+            strcpy(outpacket.type, "ACK");
+            strcpy(outpacket.fromname, inpacket.toname);
             int bytes_sent = sendto(
                     socketfide,
                     &outpacket,

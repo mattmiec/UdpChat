@@ -80,29 +80,3 @@ int send_message(int socketfide_out, char* myname, char* sendcommand, bool* acke
     printf("[No ACK from %s, message sent to server.]\n>>> ", toname);
     return offline_message(socketfide_out, servaddr, myname, toname, message, acked);
 }
-
-int send_ack(int socketfide_out, char* myname, char* toname)
-{
-    /// fill in peer info
-    struct sockaddr_in peeraddr;
-    struct table_entry peer_table_entry = lookup_table_entry(toname);
-    memset(&peeraddr, 0, sizeof(peeraddr));
-    peeraddr.sin_family = AF_INET;
-    peeraddr.sin_port = htons(peer_table_entry.port);
-    peeraddr.sin_addr.s_addr = peer_table_entry.ip_addr;
-
-    /// construct and send ack packet
-    struct packet outpacket;
-    memset(&outpacket, 0, sizeof(outpacket));
-    strncpy(outpacket.type, "ACK", strlen("ACK"));
-    int bytes_sent = sendto(
-            socketfide_out,
-            &outpacket,
-            sizeof(outpacket),
-            0,
-            (const struct sockaddr*)&peeraddr,
-            sizeof(peeraddr)
-    );
-    if (bytes_sent < 0)
-        return 1;
-}
